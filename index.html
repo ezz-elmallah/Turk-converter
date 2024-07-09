@@ -129,8 +129,7 @@
 <body>
 
 <div class="container">
-    <div class="title">Ahmed EL Mallah <br>
-      Price Converter</div>
+    <div class="title">Price Converter</div>
     <div class="form-group">
         <label for="conversionType">Select Conversion Type:</label>
         <select id="conversionType" class="input-field select-field">
@@ -198,12 +197,12 @@
         TRY_TO_EUR: 1 / 35.5,
         EUR_TO_USD: 35.5 / 32.75,
         USD_TO_EUR: 32.75 / 35.5,
-        EGP_TO_USD: 1 / 48.07,
-        EGP_TO_EUR: 1 / (48.07 * 35.5),
-        EGP_TO_TRY: 1 / (48.07 * 32.75),
+        EGP_TO_USD: 0.021,
+        EGP_TO_EUR: 0.09,
+        EGP_TO_TRY: 0.68 ,
         USD_TO_EGP: 48.07,
-        EUR_TO_EGP: 35.5 * 48.07,
-        TRY_TO_EGP: 32.75 * 48.07
+        EUR_TO_EGP: 51.98,
+        TRY_TO_EGP: 1.46
     };
     const products = [];
 
@@ -240,21 +239,82 @@
         products.forEach(product => {
             const convertedPrice = (product.price * exchangeRate * product.quantity).toFixed(2);
             totalConverted += parseFloat(convertedPrice);
-            displayResult(product.name, product.quantity, product.price, convertedPrice);
+            displayResult(product.name, product.quantity, product.price, convertedPrice, conversionType);
         });
 
         document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
     }
 
-    function displayResult(name, quantity, priceFrom, priceTo) {
+    function displayResult(name, quantity, priceFrom, priceTo, conversionType) {
         const resultsBody = document.getElementById('resultsBody');
         const row = document.createElement('tr');
         
+        let currencySymbolOriginal, currencySymbolConverted;
+        switch (conversionType) {
+            case 'USD_TO_TRY':
+           
+                currencySymbolOriginal = '$';
+                currencySymbolConverted = '₺';
+                break;
+                 case 'TRY_TO_USD':
+                    currencySymbolOriginal = '₺';
+                currencySymbolConverted = '$';
+                break;
+            case 'EUR_TO_TRY':
+            
+                currencySymbolOriginal = '€';
+                currencySymbolConverted = '₺';
+                break;
+                case 'TRY_TO_EUR':
+                    currencySymbolOriginal = '₺';
+                currencySymbolConverted = '€';
+                break;
+            case 'EUR_TO_USD':
+            
+                currencySymbolOriginal = '€';
+                currencySymbolConverted = '$';
+                break;
+                case 'USD_TO_EUR':
+                   currencySymbolOriginal = '$';
+                currencySymbolConverted = '€';
+                break;
+            case 'EGP_TO_USD':
+            
+                currencySymbolOriginal = 'EGP';
+                currencySymbolConverted = '$';
+                break;
+                case 'USD_TO_EGP':
+                    currencySymbolOriginal = '$';
+                currencySymbolConverted = 'EGP';
+                break;
+            case 'EGP_TO_EUR':
+            
+                currencySymbolOriginal = 'EGP';
+                currencySymbolConverted = '€';
+                break;
+                case 'EUR_TO_EGP':
+                   currencySymbolOriginal = '€';
+                currencySymbolConverted = 'EGP';
+                break;
+            case 'EGP_TO_TRY':
+            
+                currencySymbolOriginal = 'EGP';
+                currencySymbolConverted = '₺';
+                break;
+                case 'TRY_TO_EGP':
+                   currencySymbolOriginal = '₺';
+                currencySymbolConverted = 'EGP';
+                break;
+            default:
+                currencySymbolOriginal = '';
+                currencySymbolConverted = '';
+        }
+
         row.innerHTML = `
             <td>${name}</td>
             <td>${quantity}</td>
-            <td>${priceFrom.toFixed(2)}</td>
-            <td>${priceTo}</td>
+            <td>${currencySymbolOriginal} ${priceFrom.toFixed(2)}</td>
+            <td>${currencySymbolConverted} ${priceTo}</td>
         `;
         
         resultsBody.appendChild(row);
