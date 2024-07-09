@@ -1,208 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
-    <title>Price Converter</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-        }
-        .container {
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        .form-group button {
-            width: 48%;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin: 2px;
-            font-size: 16px;
-        }
-        .form-group button:hover {
-            background-color: #0056b3;
-        }
-        .results {
-            margin-top: 20px;
-        }
-        .results p {
-            margin: 5px 0;
-            padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .add-product {
-            background-color: #28a745;
-        }
-        .add-product:hover {
-            background-color: #218838;
-        }
-        .notification {
-            color: green;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom right, #4b6cb7, #182848);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-<div class="container">
-    <div class="title">Price Converter<br>Made for Ahmed el Mallah</div>
-    <div class="form-group">
-        <label for="conversionType">Select Conversion Type:</label>
-        <select id="conversionType">
-            <option value="USD_TO_TRY">USD to TRY</option>
-            <option value="EUR_TO_TRY">EUR to TRY</option>
-            <option value="TRY_TO_USD">TRY to USD</option>
-            <option value="TRY_TO_EUR">TRY to EUR</option>
-            <option value="EUR_TO_USD">EUR to USD</option>
-            <option value="USD_TO_EUR">USD to EUR</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="productName">Product Name:</label>
-        <input type="text" id="productName" placeholder="Enter product name">
-    </div>
-    <div class="form-group">
-        <label for="productPrice">Product Price:</label>
-        <input type="number" id="productPrice" placeholder="Enter price">
-    </div>
-    <div class="form-group">
-        <button class="add-product" onclick="addProduct()">Add Product</button>
-        <div id="notification" class="notification"></div>
-    </div>
-    <div class="form-group">
-        <button onclick="convert()">Convert</button>
-    </div>
-    <div class="results" id="results"></div>
-</div>
+.container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
 
-<script>
-    const exchangeRates = {
-        USD_TO_TRY: 32.75,
-        EUR_TO_TRY: 35.5,
-        TRY_TO_USD: 1 / 32.75,
-        TRY_TO_EUR: 1 / 35.5,
-        EUR_TO_USD: 35.5 / 32.75,
-        USD_TO_EUR: 32.75 / 35.5
-    };
-    const products = [];
+.title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
 
-    function addProduct() {
-        const name = document.getElementById('productName').value;
-        const price = parseFloat(document.getElementById('productPrice').value);
-        const notification = document.getElementById('notification');
-        
-        if (name && !isNaN(price)) {
-            products.push({ name, price });
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            notification.textContent = `Product "${name}" saved.`;
-            setTimeout(() => {
-                notification.textContent = '';
-            }, 2000);
-        } else {
-            notification.textContent = 'Please enter a valid product name and price.';
-            setTimeout(() => {
-                notification.textContent = '';
-            }, 2000);
-        }
-    }
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
 
-    function convert() {
-        const conversionType = document.getElementById('conversionType').value;
-        const exchangeRate = exchangeRates[conversionType];
-        const results = document.getElementById('results');
-        results.innerHTML = '';
-        let total = 0;
+.input-field, .select-field {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
 
-        products.forEach(product => {
-            const convertedPrice = (product.price * exchangeRate).toFixed(2);
-            total += parseFloat(convertedPrice);
-            displayResult(product.name, product.price, convertedPrice, conversionType);
-        });
+.btn-primary {
+    width: 150px;
+    padding: 12px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
 
-        const totalElement = document.createElement('p');
-        totalElement.textContent = `Total: ${total.toFixed(2)}`;
-        results.appendChild(totalElement);
-    }
+.btn-primary:hover {
+    background-color: #0056b3;
+}
 
-    function displayResult(name, priceFrom, priceTo, conversionType) {
-        const results = document.getElementById('results');
-        const result = document.createElement('p');
-        let currencyFrom, currencyTo;
-        
-        switch (conversionType) {
-            case 'USD_TO_TRY':
-                currencyFrom = 'USD';
-                currencyTo = 'TRY';
-                break;
-            case 'EUR_TO_TRY':
-                currencyFrom = 'EUR';
-                currencyTo = 'TRY';
-                break;
-            case 'TRY_TO_USD':
-                currencyFrom = 'TRY';
-                currencyTo = 'USD';
-                break;
-            case 'TRY_TO_EUR':
-                currencyFrom = 'TRY';
-                currencyTo = 'EUR';
-                break;
-            case 'EUR_TO_USD':
-                currencyFrom = 'EUR';
-                currencyTo = 'USD';
-                break;
-            case 'USD_TO_EUR':
-                currencyFrom = 'USD';
-                currencyTo = 'EUR';
-                break;
-        }
-        
-        result.textContent = `${name}: ${priceFrom} ${currencyFrom} converted to ${currencyTo} is ${priceTo}`;
-        results.appendChild(result);
-    }
-</script>
+.notification {
+    color: #2ecc71;
+    font-size: 14px;
+    margin-top: 10px;
+    animation: fadeOut 2s ease;
+}
 
-</body>
-</html>
+.results {
+    margin-top: 20px;
+}
+
+.results table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.results th, .results td {
+    padding: 10px;
+    text-align: center;
+}
+
+.results thead {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.results tfoot {
+    font-weight: bold;
+}
+
+.glow-on-hover {
+    transition: background-color 0.3s ease;
+}
+
+.glow-on-hover:hover {
+    background-color: #0056b3;
+}
