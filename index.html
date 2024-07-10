@@ -234,6 +234,7 @@
             <span id="totalConverted">0</span>
         </div>
     </div>
+    <button id="chartViewButton" class="btn-primary glow-on-hover" style="display: none;" onclick="redirectToChart()">Chart View</button>
     <button class="scroll-to-top" onclick="scrollToTop()">^</button>
 </div>
 
@@ -310,16 +311,12 @@
         // Store converted products in sessionStorage
         sessionStorage.setItem('convertedProducts', JSON.stringify(convertedProducts));
 
-        // Enable the button to navigate to results page
-        const showResultsButton = document.createElement('button');
-        showResultsButton.textContent = 'Chart View';
-        showResultsButton.classList.add('btn-primary', 'glow-on-hover');
-        showResultsButton.onclick = function() {
-            window.location.href = 'results.html';
-        };
+        // Show the "Chart View" button only if it's not already shown
+        const chartViewButton = document.getElementById('chartViewButton');
+        if (chartViewButton.style.display === 'none') {
+            chartViewButton.style.display = 'inline-block';
+        }
 
-        document.querySelector('.results').appendChild(showResultsButton);
-        
         // Scroll to top of the page
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -342,6 +339,10 @@
 
     function scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function redirectToChart() {
+        window.location.href = 'results.html';
     }
 </script>
 
