@@ -45,6 +45,7 @@
         .results-table th, .results-table td {
             padding: 12px;
             text-align: center;
+            border: 1px solid #ccc;
         }
 
         .results-table thead {
@@ -124,11 +125,11 @@
     <div class="totals">
         <div>
             <span class="total-label">Original Total:</span>
-            <span class="total-value" id="totalOriginal">0</span>
+            <span class="total-value" id="totalOriginal">$0.00</span>
         </div>
         <div>
             <span class="total-label">Converted Total:</span>
-            <span class="total-value" id="totalConverted">0</span>
+            <span class="total-value" id="totalConverted">$0.00</span>
         </div>
     </div>
 
@@ -141,23 +142,26 @@
     });
 
     function showResults() {
-        const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts'));
+        const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts')) || [];
         const resultsBody = document.getElementById('resultsBody');
         let totalOriginal = 0;
         let totalConverted = 0;
 
         convertedProducts.forEach(product => {
-            totalOriginal += product.originalPrice * product.quantity;
-            totalConverted += parseFloat(product.convertedPrice);
-
             const row = document.createElement('tr');
+            const originalSymbol = product.originalSymbol || '';
+            const convertedSymbol = product.convertedSymbol || '';
+
             row.innerHTML = `
                 <td>${product.name}</td>
                 <td>${product.quantity}</td>
-                <td>$${(product.originalPrice * product.quantity).toFixed(2)}</td>
-                <td>${product.convertedPrice}</td>
+                <td>${originalSymbol} ${parseFloat(product.originalPrice).toFixed(2)}</td>
+                <td>${convertedSymbol} ${parseFloat(product.convertedPrice).toFixed(2)}</td>
             `;
             resultsBody.appendChild(row);
+
+            totalOriginal += parseFloat(product.originalPrice) * product.quantity;
+            totalConverted += parseFloat(product.convertedPrice);
         });
 
         document.getElementById('totalOriginal').textContent = '$' + totalOriginal.toFixed(2);
