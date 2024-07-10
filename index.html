@@ -29,6 +29,7 @@
             font-weight: bold;
             color: #333;
             margin-bottom: 15px;
+            text-align: center;
         }
 
         /* Form Styling */
@@ -173,7 +174,10 @@
 <body>
 
 <div class="container">
-    <div class="title">Ahmed El Mallah Price Converter</div>
+    <div class="title">
+        <label for="chartName">Chart Name:</label>
+        <input type="text" id="chartName" class="input-field" placeholder="Enter chart name">
+    </div>
     <div class="form-group">
         <label for="conversionType">Select Conversion Type:</label>
         <select id="conversionType" class="input-field select-field">
@@ -308,8 +312,9 @@
         document.getElementById('totalOriginal').textContent = totalOriginal.toFixed(2);
         document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
 
-        // Store converted products in sessionStorage
-        sessionStorage.setItem('convertedProducts', JSON.stringify(convertedProducts));
+        // Store converted products and chart name in localStorage
+        localStorage.setItem('chartName', document.getElementById('chartName').value.trim());
+        localStorage.setItem('convertedProducts', JSON.stringify(convertedProducts));
 
         // Show the "Chart View" button only if it's not already shown
         const chartViewButton = document.getElementById('chartViewButton');
