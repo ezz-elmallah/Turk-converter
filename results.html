@@ -53,6 +53,9 @@
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .results-table th {
@@ -116,7 +119,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="title">Ahmed El Mallah Price Converter</div>
+        <div class="title" id="chartName"></div>
         <div class="results-table">
             <table id="resultsTable">
                 <thead>
@@ -145,8 +148,12 @@
     </div>
 
     <script>
-        // Retrieve the converted products from sessionStorage
-        const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts')) || [];
+        // Retrieve the chart name and converted products from localStorage
+        const chartName = localStorage.getItem('chartName') || 'Price Converter Results';
+        const convertedProducts = JSON.parse(localStorage.getItem('convertedProducts')) || [];
+
+        // Set the chart name in the title
+        document.getElementById('chartName').textContent = chartName;
 
         // Display the results
         const resultsBody = document.getElementById('resultsBody');
