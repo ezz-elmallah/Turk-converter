@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+style : <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,9 +53,6 @@
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .results-table th {
@@ -119,7 +116,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="title" id="chartName"></div>
+        <div class="title">Ahmed El Mallah Price Converter</div>
         <div class="results-table">
             <table id="resultsTable">
                 <thead>
@@ -148,12 +145,8 @@
     </div>
 
     <script>
-        // Retrieve the chart name and converted products from localStorage
-        const chartName = localStorage.getItem('chartName') || 'Price Converter Results';
-        const convertedProducts = JSON.parse(localStorage.getItem('convertedProducts')) || [];
-
-        // Set the chart name in the title
-        document.getElementById('chartName').textContent = chartName;
+        // Retrieve the converted products from sessionStorage
+        const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts')) || [];
 
         // Display the results
         const resultsBody = document.getElementById('resultsBody');
@@ -175,12 +168,12 @@
             const originalSymbol = conversionType.startsWith('USD') ? '$' : (conversionType.startsWith('EUR') ? '€' : (conversionType.startsWith('EGP') ? 'EGP' : '₺'));
             const convertedSymbol = conversionType.endsWith('USD') ? '$' : (conversionType.endsWith('EUR') ? '€' : (conversionType.endsWith('EGP') ? 'EGP' : '₺'));
 
-            row.innerHTML = `
+            row.innerHTML = 
                 <td>${name}</td>
                 <td>${quantity}</td>
                 <td>${originalSymbol} ${(priceFrom * quantity).toFixed(2)}</td>
                 <td>${convertedSymbol} ${priceTo}</td>
-            `;
+            ;
             
             resultsBody.appendChild(row);
         }
