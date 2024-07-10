@@ -3,62 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversion Results</title>
+    <title>Converted Products</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(to bottom right, #4b6cb7, #182848);
+            color: #000000;
             margin: 0;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
         }
 
         .container {
             background: #ffffff;
             padding: 20px;
             border-radius: 10px;
-            width: 100%;
-            max-width: 800px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            overflow-x: auto; /* Enable horizontal scrolling on small screens */
+            margin: 20px auto;
         }
 
         .title {
-            font-size: 2rem;
+            font-size: 36px;
             font-weight: bold;
             color: #333;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        .results-table {
+        .results {
+            margin-top: 20px;
+            overflow-x: auto; /* Enable horizontal scrolling on small screens */
+        }
+
+        .results table {
             width: 100%;
             border-collapse: collapse;
             background-color: #ffffff;
-            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .results-table th, .results-table td {
+        .results th, .results td {
             padding: 12px;
             text-align: center;
-            border: 1px solid #ccc;
+            border-bottom: 1px solid #ddd; /* Add border-bottom for table rows */
         }
 
-        .results-table thead {
+        .results th {
             background-color: #007BFF;
             color: #fff;
         }
 
-        .results-table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .results tbody tr:nth-child(even) {
+            background-color: #f2f2f2; /* Alternate row background */
         }
 
-        .results-table tbody tr:hover {
-            background-color: #e0e0e0;
+        .results tfoot {
+            font-weight: bold;
         }
 
         .totals {
@@ -70,13 +72,14 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            color: #333;
-            font-size: 1.2rem;
+            color: #000;
+            font-size: 20px; /* Adjusted font size for totals */
         }
 
         .totals .total-label {
-            font-size: 1.2rem;
+            font-size: 16px; /* Adjusted font size for labels */
             color: #007BFF;
+            margin-right: 10px;
         }
 
         .totals .total-value {
@@ -87,16 +90,11 @@
             background-color: #007BFF;
             color: #fff;
             border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
             transition: background-color 0.3s ease;
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: fit-content;
         }
 
         .back-button:hover {
@@ -107,69 +105,126 @@
 <body>
 
 <div class="container">
-    <div class="title">Conversion Results</div>
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Original Price</th>
-                <th>Converted Price</th>
-            </tr>
-        </thead>
-        <tbody id="resultsBody">
-            <!-- Results will be populated dynamically -->
-        </tbody>
-    </table>
-
+    <div class="title">Converted Products</div>
+    <div class="results">
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Original Price</th>
+                    <th>Converted Price</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+            </tbody>
+        </table>
+    </div>
     <div class="totals">
         <div>
-            <span class="total-label">Original Total:</span>
-            <span class="total-value" id="totalOriginal">$0.00</span>
+            <span class="total-label" id="originalTotalLabel"></span> 
+            <span class="total-value" id="totalOriginal"></span>
         </div>
         <div>
-            <span class="total-label">Converted Total:</span>
-            <span class="total-value" id="totalConverted">$0.00</span>
+            <span class="total-label" id="convertedTotalLabel"></span> 
+            <span class="total-value" id="totalConverted"></span>
         </div>
     </div>
-
-    <button class="back-button" onclick="goBack()">Go Back</button>
+    <button class="back-button" onclick="goBack()">Back</button>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        showResults();
+    const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts'));
+    const conversionType = convertedProducts.length > 0 ? convertedProducts[0].conversionType : '';
+
+    const resultsBody = document.getElementById('resultsBody');
+    let totalOriginal = 0;
+    let totalConverted = 0;
+
+    convertedProducts.forEach(product => {
+        totalOriginal += product.originalPrice * product.quantity;
+        totalConverted += parseFloat(product.convertedPrice);
+        displayResult(product.name, product.quantity, product.originalPrice, product.convertedPrice, conversionType);
     });
 
-    function showResults() {
-        const convertedProducts = JSON.parse(sessionStorage.getItem('convertedProducts')) || [];
-        const resultsBody = document.getElementById('resultsBody');
-        let totalOriginal = 0;
-        let totalConverted = 0;
+    document.getElementById('totalOriginal').textContent = totalOriginal.toFixed(2);
+    document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
 
-        convertedProducts.forEach(product => {
-            const row = document.createElement('tr');
-            const originalSymbol = product.originalSymbol || '';
-            const convertedSymbol = product.convertedSymbol || '';
-
-            row.innerHTML = `
-                <td>${product.name}</td>
-                <td>${product.quantity}</td>
-                <td>${originalSymbol} ${parseFloat(product.originalPrice).toFixed(2)}</td>
-                <td>${convertedSymbol} ${parseFloat(product.convertedPrice).toFixed(2)}</td>
-            `;
-            resultsBody.appendChild(row);
-
-            totalOriginal += parseFloat(product.originalPrice) * product.quantity;
-            totalConverted += parseFloat(product.convertedPrice);
-        });
-
-        document.getElementById('totalOriginal').textContent = '$' + totalOriginal.toFixed(2);
-        document.getElementById('totalConverted').textContent = '$' + totalConverted.toFixed(2);
+    // Set labels based on conversion type
+    let originalSymbol, convertedSymbol;
+    switch (conversionType) {
+        case 'USD_TO_TRY':
+            originalSymbol = '$';
+            convertedSymbol = '₺';
+            break;
+        case 'EUR_TO_TRY':
+            originalSymbol = '€';
+            convertedSymbol = '₺';
+            break;
+        case 'TRY_TO_USD':
+            originalSymbol = '₺';
+            convertedSymbol = '$';
+            break;
+        case 'TRY_TO_EUR':
+            originalSymbol = '₺';
+            convertedSymbol = '€';
+            break;
+        case 'EUR_TO_USD':
+            originalSymbol = '€';
+            convertedSymbol = '$';
+            break;
+        case 'USD_TO_EUR':
+            originalSymbol = '$';
+            convertedSymbol = '€';
+            break;
+        case 'EGP_TO_USD':
+            originalSymbol = 'EGP';
+            convertedSymbol = '$';
+            break;
+        case 'EGP_TO_EUR':
+            originalSymbol = 'EGP';
+            convertedSymbol = '€';
+            break;
+        case 'EGP_TO_TRY':
+            originalSymbol = 'EGP';
+            convertedSymbol = '₺';
+            break;
+        case 'USD_TO_EGP':
+            originalSymbol = '$';
+            convertedSymbol = 'EGP';
+            break;
+        case 'EUR_TO_EGP':
+            originalSymbol = '€';
+            convertedSymbol = 'EGP';
+            break;
+        case 'TRY_TO_EGP':
+            originalSymbol = '₺';
+            convertedSymbol = 'EGP';
+            break;
+        default:
+            originalSymbol = '';
+            convertedSymbol = '';
     }
 
+    document.getElementById('originalTotalLabel').textContent = `Original Total:`;
+    document.getElementById('convertedTotalLabel').textContent = `Converted Total:`;
+
+    function displayResult(name, quantity, priceFrom, priceTo, conversionType) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${name}</td>
+            <td>${quantity}</td>
+            <td>${originalSymbol} ${(priceFrom * quantity).toFixed(2)}</td>
+            <td>${convertedSymbol} ${priceTo}</td>
+        `;
+        
+        resultsBody.appendChild(row);
+    }
+
+    // Function to navigate back to index.html
     function goBack() {
-        window.history.back();
+        window.location.href = 'index.html';
     }
 </script>
 
