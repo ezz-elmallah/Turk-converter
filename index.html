@@ -152,7 +152,7 @@
 <body>
 
 <div class="container">
-    <div class="title">Ahmed El Mallah <br> Price Converter</div>
+    <div class="title">Ahmed El Mallah Price Converter</div>
     <div class="form-group">
         <label for="conversionType">Select Conversion Type:</label>
         <select id="conversionType" class="input-field select-field">
@@ -239,20 +239,24 @@
         const quantity = parseInt(document.getElementById('productQuantity').value);
         const notification = document.getElementById('notification');
         
-        if (name && !isNaN(price) && !isNaN(quantity) && quantity > 0) {
+        if (name && !isNaN(price) && !isNaN(quantity) && quantity > 0 && price > 0) {
             products.push({ name, price, quantity });
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
             document.getElementById('productQuantity').value = '1';
-            notification.textContent = `Product "${name}" added.`;
+            notification.textContent = `${name} added successfully.`;
+            notification.classList.add('notification');
             setTimeout(() => {
                 notification.textContent = '';
-            }, 2000);
+                notification.classList.remove('notification');
+            }, 3000);
         } else {
-            notification.textContent = 'Please enter a valid product name, price, and quantity.';
+            notification.textContent = 'Please fill all fields correctly.';
+            notification.classList.add('notification');
             setTimeout(() => {
                 notification.textContent = '';
-            }, 2000);
+                notification.classList.remove('notification');
+            }, 3000);
         }
     }
 
@@ -263,27 +267,47 @@
         resultsBody.innerHTML = '';
         let totalOriginal = 0;
         let totalConverted = 0;
+        let convertedProducts = []; // Array to store converted products
 
         products.forEach(product => {
             const convertedPrice = (product.price * exchangeRate * product.quantity).toFixed(2);
             totalOriginal += product.price * product.quantity;
             totalConverted += parseFloat(convertedPrice);
+            convertedProducts.push({
+                name: product.name,
+                quantity: product.quantity,
+                originalPrice: product.price,
+                convertedPrice: convertedPrice,
+                conversionType: conversionType
+            });
             displayResult(product.name, product.quantity, product.price, convertedPrice, conversionType);
         });
 
         document.getElementById('totalOriginal').textContent = totalOriginal.toFixed(2);
         document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
+
+        // Store converted products in sessionStorage
+        sessionStorage.setItem('convertedProducts', JSON.stringify(convertedProducts));
+
+        // Enable the button to navigate to results page
+        const showResultsButton = document.createElement('button');
+        showResultsButton.textContent = 'Show Results';
+        showResultsButton.classList.add('btn-primary', 'glow-on-hover');
+        showResultsButton.onclick = function() {
+            window.location.href = 'results.html';
+        };
+
+        document.querySelector('.results').appendChild(showResultsButton);
         
-        // Scroll to the top of the page
-        window.scrollTo(0, 0);
+        // Scroll to top of the page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function displayResult(name, quantity, priceFrom, priceTo, conversionType) {
-        const resultsBody = document.getElementById('resultsBody');
         const row = document.createElement('tr');
 
-        const originalSymbol = document.getElementById('conversionType').querySelector(`option[value="${conversionType}"]`).getAttribute('data-original-symbol');
-        const convertedSymbol = document.getElementById('conversionType').querySelector(`option[value="${conversionType}"]`).getAttribute('data-converted-symbol');
+        const originalSymbol = conversionType.startsWith('USD') ? '$' : (conversionType.startsWith('EUR') ? '€' : (conversionType.startsWith('EGP') ? 'EGP' : '₺'));
+        const convertedSymbol = conversionType.endsWith('USD') ? '$' : (conversionType.endsWith('EUR') ? '€' : (conversionType.endsWith('EGP') ? 'EGP' : '₺'));
 
         row.innerHTML = `
             <td>${name}</td>
@@ -296,7 +320,7 @@
     }
 
     function scrollToTop() {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
