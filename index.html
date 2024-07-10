@@ -13,6 +13,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: #000000;
         }
 
         .container {
@@ -124,6 +125,28 @@
         .scroll-to-top:hover {
             background-color: #0056b3;
         }
+
+        .totals {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+
+        .totals div {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .totals .total-label {
+            font-size: 20px;
+            color: #007BFF;
+        }
     </style>
 </head>
 <body>
@@ -133,18 +156,18 @@
     <div class="form-group">
         <label for="conversionType">Select Conversion Type:</label>
         <select id="conversionType" class="input-field select-field">
-            <option value="USD_TO_TRY">USD to TRY</option>
-            <option value="EUR_TO_TRY">EUR to TRY</option>
-            <option value="TRY_TO_USD">TRY to USD</option>
-            <option value="TRY_TO_EUR">TRY to EUR</option>
-            <option value="EUR_TO_USD">EUR to USD</option>
-            <option value="USD_TO_EUR">USD to EUR</option>
-            <option value="EGP_TO_USD">EGP to USD</option>
-            <option value="EGP_TO_EUR">EGP to EUR</option>
-            <option value="EGP_TO_TRY">EGP to TRY</option>
-            <option value="USD_TO_EGP">USD to EGP</option>
-            <option value="EUR_TO_EGP">EUR to EGP</option>
-            <option value="TRY_TO_EGP">TRY to EGP</option>
+            <option value="USD_TO_TRY" data-original-symbol="$" data-converted-symbol="₺">USD to TRY</option>
+            <option value="EUR_TO_TRY" data-original-symbol="€" data-converted-symbol="₺">EUR to TRY</option>
+            <option value="TRY_TO_USD" data-original-symbol="₺" data-converted-symbol="$">TRY to USD</option>
+            <option value="TRY_TO_EUR" data-original-symbol="₺" data-converted-symbol="€">TRY to EUR</option>
+            <option value="EUR_TO_USD" data-original-symbol="€" data-converted-symbol="$">EUR to USD</option>
+            <option value="USD_TO_EUR" data-original-symbol="$" data-converted-symbol="€">USD to EUR</option>
+            <option value="EGP_TO_USD" data-original-symbol="EGP" data-converted-symbol="$">EGP to USD</option>
+            <option value="EGP_TO_EUR" data-original-symbol="EGP" data-converted-symbol="€">EGP to EUR</option>
+            <option value="EGP_TO_TRY" data-original-symbol="EGP" data-converted-symbol="₺">EGP to TRY</option>
+            <option value="USD_TO_EGP" data-original-symbol="$" data-converted-symbol="EGP">USD to EGP</option>
+            <option value="EUR_TO_EGP" data-original-symbol="€" data-converted-symbol="EGP">EUR to EGP</option>
+            <option value="TRY_TO_EGP" data-original-symbol="₺" data-converted-symbol="EGP">TRY to EGP</option>
         </select>
     </div>
     <div class="form-group">
@@ -178,13 +201,17 @@
             </thead>
             <tbody id="resultsBody">
             </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="3" style="text-align: right;">Total:</td>
-                    <td id="totalConverted"></td>
-                </tr>
-            </tfoot>
         </table>
+    </div>
+    <div class="totals">
+        <div>
+            <span class="total-label">Original Total:</span> 
+            <span id="totalOriginal">0</span>
+        </div>
+        <div>
+            <span class="total-label">Converted Total:</span> 
+            <span id="totalConverted">0</span>
+        </div>
     </div>
     <button class="scroll-to-top" onclick="scrollToTop()">^</button>
 </div>
@@ -199,7 +226,7 @@
         USD_TO_EUR: 32.75 / 35.5,
         EGP_TO_USD: 0.021,
         EGP_TO_EUR: 0.09,
-        EGP_TO_TRY: 0.68 ,
+        EGP_TO_TRY: 0.68,
         USD_TO_EGP: 48.07,
         EUR_TO_EGP: 51.98,
         TRY_TO_EGP: 1.46
@@ -234,87 +261,32 @@
         const exchangeRate = exchangeRates[conversionType];
         const resultsBody = document.getElementById('resultsBody');
         resultsBody.innerHTML = '';
+        let totalOriginal = 0;
         let totalConverted = 0;
 
         products.forEach(product => {
             const convertedPrice = (product.price * exchangeRate * product.quantity).toFixed(2);
+            totalOriginal += product.price * product.quantity;
             totalConverted += parseFloat(convertedPrice);
             displayResult(product.name, product.quantity, product.price, convertedPrice, conversionType);
         });
 
+        document.getElementById('totalOriginal').textContent = totalOriginal.toFixed(2);
         document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
     }
 
     function displayResult(name, quantity, priceFrom, priceTo, conversionType) {
         const resultsBody = document.getElementById('resultsBody');
         const row = document.createElement('tr');
-        
-        let currencySymbolOriginal, currencySymbolConverted;
-        switch (conversionType) {
-            case 'USD_TO_TRY':
-           
-                currencySymbolOriginal = '$';
-                currencySymbolConverted = '₺';
-                break;
-                 case 'TRY_TO_USD':
-                    currencySymbolOriginal = '₺';
-                currencySymbolConverted = '$';
-                break;
-            case 'EUR_TO_TRY':
-            
-                currencySymbolOriginal = '€';
-                currencySymbolConverted = '₺';
-                break;
-                case 'TRY_TO_EUR':
-                    currencySymbolOriginal = '₺';
-                currencySymbolConverted = '€';
-                break;
-            case 'EUR_TO_USD':
-            
-                currencySymbolOriginal = '€';
-                currencySymbolConverted = '$';
-                break;
-                case 'USD_TO_EUR':
-                   currencySymbolOriginal = '$';
-                currencySymbolConverted = '€';
-                break;
-            case 'EGP_TO_USD':
-            
-                currencySymbolOriginal = 'EGP';
-                currencySymbolConverted = '$';
-                break;
-                case 'USD_TO_EGP':
-                    currencySymbolOriginal = '$';
-                currencySymbolConverted = 'EGP';
-                break;
-            case 'EGP_TO_EUR':
-            
-                currencySymbolOriginal = 'EGP';
-                currencySymbolConverted = '€';
-                break;
-                case 'EUR_TO_EGP':
-                   currencySymbolOriginal = '€';
-                currencySymbolConverted = 'EGP';
-                break;
-            case 'EGP_TO_TRY':
-            
-                currencySymbolOriginal = 'EGP';
-                currencySymbolConverted = '₺';
-                break;
-                case 'TRY_TO_EGP':
-                   currencySymbolOriginal = '₺';
-                currencySymbolConverted = 'EGP';
-                break;
-            default:
-                currencySymbolOriginal = '';
-                currencySymbolConverted = '';
-        }
+
+        const originalSymbol = document.getElementById('conversionType').querySelector(`option[value="${conversionType}"]`).getAttribute('data-original-symbol');
+        const convertedSymbol = document.getElementById('conversionType').querySelector(`option[value="${conversionType}"]`).getAttribute('data-converted-symbol');
 
         row.innerHTML = `
             <td>${name}</td>
             <td>${quantity}</td>
-            <td>${currencySymbolOriginal} ${priceFrom.toFixed(2)}</td>
-            <td>${currencySymbolConverted} ${priceTo}</td>
+            <td>${originalSymbol} ${(priceFrom * quantity).toFixed(2)}</td>
+            <td>${convertedSymbol} ${priceTo}</td>
         `;
         
         resultsBody.appendChild(row);
