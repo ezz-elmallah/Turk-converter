@@ -174,7 +174,6 @@
 <body>
 
 <div class="container">
-    
     <div class="form-group">
         <label for="conversionType">Select Conversion Type:</label>
         <select id="conversionType" class="input-field select-field">
@@ -309,8 +308,7 @@
         document.getElementById('totalOriginal').textContent = totalOriginal.toFixed(2);
         document.getElementById('totalConverted').textContent = totalConverted.toFixed(2);
 
-        // Store converted products and chart name in localStorage
-        localStorage.setItem('chartName', document.getElementById('chartName').value.trim());
+        // Store converted products in localStorage
         localStorage.setItem('convertedProducts', JSON.stringify(convertedProducts));
 
         // Show the "Chart View" button only if it's not already shown
